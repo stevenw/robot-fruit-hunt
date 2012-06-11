@@ -80,7 +80,11 @@ function new_game() {
 				rarest = rarest.left < types[i].left ? rarest : types[i];
 			}
 
-			if (rarest.type === type) {
+			if (!rarest) {
+				console.log(types);
+			}
+
+			if (rarest && rarest.type === type) {
 				return true;
 			}
 		};
