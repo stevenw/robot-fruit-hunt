@@ -35,7 +35,6 @@ function new_game() {
 						fruit.id = counter;
 						fruit.loc = cell;
 						fruit.type = getType(cell);
-						//console.log(fruit);
 
 						fruitMap.push(fruit);
 					}
@@ -65,12 +64,34 @@ function new_game() {
 			}
 		};
 
+		var isRarest = function (type) {
+			var count, rarest, types = [];
+
+			for (var i = 1; i < get_number_of_item_types(); i++) {
+				count = countType(i) - get_my_item_count(i) - get_opponent_item_count(i);
+				if (count > 0) {
+					types.push({type: i, left: count});
+				}
+			}
+
+			rarest = types[0];
+
+			for (var i = 1; i < types.length; i++) {
+				rarest = rarest.left < types[i].left ? rarest : types[i];
+			}
+
+			if (rarest.type === type) {
+				return true;
+			}
+		};
+
 		return {
 			me: getMe,
 			them: getThem,
 			isGood: isGood,
 			countType: countType,
 			isRare: isRare,
+			isRarest: isRarest,
 			getDistance: getDistance,
 			getMap: getMap
 		}
@@ -128,6 +149,7 @@ function new_game() {
 				return checkY(waypoint.y);
 			}
 
+
 			console.log(waypoint);
 
 			console.log('shit fuck');
@@ -153,23 +175,23 @@ var Fruit = {
 	id: 0,
 	type: 0,
 	loc: {x: 0, y: 0},
-	rating: 0,
 	getRating: function (api) {
-		this.rating = 100;
-		this.rating -= api.getDistance(api.me(), this.loc) * 3.5;
-		//this.rating += api.getDistance(api.them(), this.loc) * 0.1;
-		this.rating -= api.countType(this.type) > 1 ? api.countType(this.type) * 1.5 : -10;
-		this.rating += api.isRare(this.type) ? 10 : 0;
+		var rating = 100;
+		var distMe = api.getDistance(api.me(), this.loc);
+		var distThem = api.getDistance(api.them(), this.loc);
 
-		if ( ! api.isGood(this.type)) {
-			this.rating = 0;
-		}
+		rating -= distMe * 3.4;
+		rating -= api.countType(this.type) * 1.5;
+		rating -= api.isGood(this.type) ? 0 : 100;
+		rating += api.isRare(this.type) ? 10 : 0;
+		rating += api.isRarest(this.type) ? 15 : 0;
 
-		if (this.rating < 0) {
-			return 'less than zero?';
-		}
 
-		return this.rating;
+		//if (rating < 0) {
+			//console.log('less than zero?');
+		//}
+
+		return rating;
 	}
 };
 
