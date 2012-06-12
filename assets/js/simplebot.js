@@ -1,4 +1,4 @@
-// this is your opponent in the real-time player to use for debugging 
+// this is your opponent in the real-time player to use for debugging
 
 var SimpleBot = {
     makeMove: function() {
@@ -28,7 +28,7 @@ var SimpleBot = {
 
     findMove: function(n) {
        // closest item! we will go to it
-       if (has_item(SimpleBot.board[n.x][n.y]))
+       if (has_item(SimpleBot.board[n.x][n.y]) && SimpleBot.isGood(SimpleBot.board[n.x][n.y]))
            return n.move;
 
        var possibleMove = n.move;
@@ -37,33 +37,33 @@ var SimpleBot = {
        if (SimpleBot.considerMove(n.x, n.y-1)) {
            if (n.move == -1) {
                possibleMove = NORTH;
-           } 
+           }
            SimpleBot.toConsider.push(new node(n.x, n.y-1, possibleMove));
-       } 
+       }
 
        // SOUTH
        if (SimpleBot.considerMove(n.x, n.y+1)) {
            if (n.move == -1) {
                possibleMove = SOUTH;
-           } 
+           }
            SimpleBot.toConsider.push(new node(n.x, n.y+1, possibleMove));
-       } 
+       }
 
        // WEST
        if (SimpleBot.considerMove(n.x-1, n.y)) {
            if (n.move == -1) {
                possibleMove = WEST;
-           } 
+           }
            SimpleBot.toConsider.push(new node(n.x-1, n.y, possibleMove));
-       } 
+       }
 
-       // EAST 
+       // EAST
        if (SimpleBot.considerMove(n.x+1, n.y)) {
            if (n.move == -1) {
                possibleMove = EAST;
-           } 
+           }
            SimpleBot.toConsider.push(new node(n.x+1, n.y, possibleMove));
-       } 
+       }
 
        // take next node to bloom out from
        if (SimpleBot.toConsider.length > 0) {
@@ -86,7 +86,16 @@ var SimpleBot = {
         if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
             return false;
         return true;
-    }
+    },
+	isGood: function (type) {
+		var mine = get_my_item_count(type);
+		var them = get_opponent_item_count(type);
+		var ftw = Math.ceil(get_total_item_count(type) / 2); // Assume every type has an odd number of pieces
+
+		if (mine < ftw && them < ftw) {
+			return true;
+		}
+	}
 }
 
 function node(x, y, move) {
