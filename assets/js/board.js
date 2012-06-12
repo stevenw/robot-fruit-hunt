@@ -115,20 +115,20 @@ var Board = {
         var move_start = new Date().getTime();
         var myMove = make_move();
         var elapsed = ((new Date().getTime() - move_start) / 1000).toFixed(2);
-        console.log("["+Board.move_num+"] elapsed time: "+elapsed+"s");
+       // console.log("["+Board.move_num+"] elapsed time: "+elapsed+"s");
         var simpleBotMove = SimpleBot.makeMove();
         if ((Board.myX == Board.oppX) && (Board.myY == Board.oppY) && (myMove == TAKE) && (simpleBotMove == TAKE) && Board.board[Board.myX][Board.myY] > 0) {
             Board.myBotCollected[Board.board[Board.myX][Board.myY]-1] = Board.myBotCollected[Board.board[Board.myX][Board.myY]-1] + 0.5;
             Board.simpleBotCollected[Board.board[Board.oppX][Board.oppY]-1] = Board.simpleBotCollected[Board.board[Board.oppX][Board.oppY]-1] + 0.5;
-            Board.board[Board.myX][Board.myY] = 0; 
+            Board.board[Board.myX][Board.myY] = 0;
         } else {
             if (myMove == TAKE && Board.board[Board.myX][Board.myY] > 0) {
                 Board.myBotCollected[Board.board[Board.myX][Board.myY]-1]++;
-                Board.board[Board.myX][Board.myY] = 0; 
+                Board.board[Board.myX][Board.myY] = 0;
             }
             if (simpleBotMove == TAKE && Board.board[Board.oppX][Board.oppY] > 0) {
                 Board.simpleBotCollected[Board.board[Board.oppX][Board.oppY]-1]++;
-                Board.board[Board.oppX][Board.oppY] = 0; 
+                Board.board[Board.oppX][Board.oppY] = 0;
             }
         }
         if (myMove == NORTH) {
@@ -226,7 +226,7 @@ var Board = {
         Board.normalPRNG = Math.random;
     },
     random: function() {
-        // Generate a random number from the board setup 
+        // Generate a random number from the board setup
         // PRNG and then switch Math.random back to the normal PRNG.
         var number;
 
