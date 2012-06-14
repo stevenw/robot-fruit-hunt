@@ -192,6 +192,12 @@ function new_game() {
 			if (checkY(waypoint.y)) {
 				return checkY(waypoint.y);
 			}
+
+			if (trace) {
+				trace('no moves?');
+			}else {
+				console.log('no moves?');
+			}
 		};
 
 		return {
