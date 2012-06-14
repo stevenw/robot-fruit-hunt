@@ -121,7 +121,7 @@ function new_game() {
 			}
 
 			if (!rarest) {
-				console.log(types);
+				api.track(types);
 			}
 
 			if (rarest && rarest.type === type) {
@@ -145,7 +145,8 @@ function new_game() {
 			isRare: isRare,
 			isRarest: isRarest,
 			getDistance: getDistance,
-			getMap: getMap
+			getMap: getMap,
+			track: track
 		}
 	}(get_board()));
 
