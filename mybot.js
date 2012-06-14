@@ -133,7 +133,7 @@ function new_game() {
 			if (trace) {
 				trace(string);
 			}else {
-				console.log(string;
+				console.log(string);
 			}
 		};
 
