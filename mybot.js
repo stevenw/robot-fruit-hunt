@@ -129,6 +129,14 @@ function new_game() {
 			}
 		};
 
+		var track = function (string) {
+			if (trace) {
+				trace(string);
+			}else {
+				console.log(string;
+			}
+		};
+
 		return {
 			me: getMe,
 			them: getThem,
@@ -178,6 +186,8 @@ function new_game() {
 			var waypoint = {x: api.me().x - target.loc.x, y: api.me().y - target.loc.y};
 
 			if ( ! target) {
+				api.track('why is there no target.');
+
 				return PASS;
 			}
 
@@ -193,11 +203,7 @@ function new_game() {
 				return checkY(waypoint.y);
 			}
 
-			if (trace) {
-				trace('no moves?');
-			}else {
-				console.log('no moves?');
-			}
+			api.track('why is there no moves.');
 		};
 
 		return {
@@ -207,5 +213,9 @@ function new_game() {
 }
 
 function make_move() {
+	if (!api) {
+		trace('omg no api available?');
+	}
+
 	return elmoBot.move();
 }
