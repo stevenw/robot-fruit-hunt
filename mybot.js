@@ -18,7 +18,7 @@ var Fruit = {
 			distance = api.getDistance(fruitMap[i].loc, this.loc);
 			if (distance < 10 && this.id !== fruitMap[i].id) {
 				rating += 10 / distance;
-				rating += this.type === fruitMap[i].type ? 5 : 0;
+				rating += this.type === fruitMap[i].type ? 6 / distance : 0;
 			}
 		}
 
@@ -192,11 +192,6 @@ function new_game() {
 			if (checkY(waypoint.y)) {
 				return checkY(waypoint.y);
 			}
-
-
-			console.log(waypoint);
-
-			console.log('shit fuck');
 		};
 
 		return {
