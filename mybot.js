@@ -16,7 +16,7 @@ var Fruit = {
 
 		for (var i = 0, l = fruitMap.length; i < l; i++) {
 			distance = api.getDistance(fruitMap[i].loc, this.loc);
-			if (distance < 10 && this.id !== fruitMap[i].id) {
+			if (distance < 5 && this.id !== fruitMap[i].id) {
 				rating += 10 / distance;
 				rating += this.type === fruitMap[i].type ? 6 / distance : 0;
 			}
@@ -40,7 +40,7 @@ var Fruit = {
 
 function new_game() {
 	// API Wrapper
-	api = (function (board) {
+	api = (function () {
 		var getMe = function () {
 			return {x: get_my_x(), y: get_my_y()};
 		};
@@ -50,11 +50,11 @@ function new_game() {
 		};
 
 		var isFruit = function (cell) {
-			return has_item(board[cell.x][cell.y]);
+			return has_item(get_board()[cell.x][cell.y]);
 		};
 
 		var getType = function (cell) {
-			return board[cell.x][cell.y];
+			return get_board()[cell.x][cell.y];
 		};
 
 		var getDistance = function (alpha, beta) {
@@ -146,9 +146,10 @@ function new_game() {
 			isRarest: isRarest,
 			getDistance: getDistance,
 			getMap: getMap,
+			isFruit: isFruit,
 			track: track
 		}
-	}(get_board()));
+	}());
 
 	// Elmo BETA
 	elmoBot = (function (api) {
@@ -186,6 +187,12 @@ function new_game() {
 			var target = getTarget(api.getMap());
 			var waypoint = {x: api.me().x - target.loc.x, y: api.me().y - target.loc.y};
 
+			if ( ! waypoint) {
+				api.track('why is there no waypoint.');
+
+				return PASS;
+			}
+
 			if ( ! target) {
 				api.track('why is there no target.');
 
@@ -193,7 +200,15 @@ function new_game() {
 			}
 
 			if (api.me().x === target.loc.x && api.me().y === target.loc.y) {
-				return TAKE;
+				if (api.isFruit(target.loc)) {
+					return TAKE;
+				}else {
+					api.track('trying to take an empty cell?');
+				}
+			}
+
+			if (waypoint.x === 0 && waypoint.y === 0) {
+				api.track('why no take?!?');
 			}
 
 			if (checkX(waypoint.x)) {
@@ -205,6 +220,8 @@ function new_game() {
 			}
 
 			api.track('why is there no moves.');
+
+			return PASS;
 		};
 
 		return {
