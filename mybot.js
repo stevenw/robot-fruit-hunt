@@ -4,10 +4,11 @@ var Fruit = {
 	loc: {x: 0, y: 0},
 	rateType: function (rating) {
 		rating -= api.countType(this.type) * 1.3;
-		rating -= api.isGood(this.type) ? 0 : 100;
-		rating += api.isRare(this.type) ? 10 / get_number_of_item_types() : 0;
-		rating += api.isRarest(this.type) ? 30 / get_number_of_item_types() : 0;
+		rating -= api.isGood(this.type) ? 0 : 200;
+		rating += api.isRare(this.type) ? 10 + get_number_of_item_types() : 0;
+		rating += api.isRarest(this.type) ? 20 + get_number_of_item_types() : 0;
 
+		console.log(api.countType(this.type));
 
 		return rating;
 	},
@@ -96,7 +97,7 @@ function new_game() {
 		};
 
 		var countType = function (type) {
-			return get_total_item_count(type);
+			return get_total_item_count(type) - (get_my_item_count(type) +  get_opponent_item_count(type));
 		};
 
 		var isRare = function (type) {
@@ -119,10 +120,6 @@ function new_game() {
 
 			for (var i = 1; i < types.length; i++) {
 				rarest = rarest.left < types[i].left ? rarest : types[i];
-			}
-
-			if (!rarest) {
-				api.track(types);
 			}
 
 			if (rarest && rarest.type === type) {
