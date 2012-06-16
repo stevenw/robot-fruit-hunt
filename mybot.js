@@ -3,12 +3,10 @@ var Fruit = {
 	type: 0,
 	loc: {x: 0, y: 0},
 	rateType: function (rating) {
-		rating -= api.countType(this.type) * 1.3;
+		rating -= api.countType(this.type) * 1.45;
 		rating -= api.isGood(this.type) ? 0 : 200;
 		rating += api.isRare(this.type) ? 10 + get_number_of_item_types() : 0;
 		rating += api.isRarest(this.type) ? 20 + get_number_of_item_types() : 0;
-
-		console.log(api.countType(this.type));
 
 		return rating;
 	},
@@ -19,7 +17,7 @@ var Fruit = {
 		for (var i = 0, l = fruitMap.length; i < l; i++) {
 			distance = api.getDistance(fruitMap[i].loc, this.loc);
 			if (distance < 4 && this.id !== fruitMap[i].id) {
-				rating += 3 / distance;
+				rating += 5 / distance;
 				rating += this.type === fruitMap[i].type ? 2 / distance : 0;
 			}
 		}
@@ -32,7 +30,7 @@ var Fruit = {
 		var distThem = api.getDistance(api.them(), this.loc);
 
 		rating -= distMe * 5;
-		rating -= distThem < distMe ? 10 / distMe : 0;
+		rating -= distThem < distMe ? 6 : 0;
 		rating = this.rateType(rating);
 		rating = this.rateArea(rating);
 
