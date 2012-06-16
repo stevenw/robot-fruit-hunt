@@ -42,7 +42,7 @@ var GamePlay = {
     },
     setupNewGame: function(boardNumber) {
         // Create a new board setup according to the following priority:
-        // 
+        //
         // 1. If a board number is passed in, use that.
         // 2. If the bot has default_board_number() defined, use that.
         // 3. Generate a random board number.
@@ -148,10 +148,20 @@ var GamePlay = {
         ctx.drawImage(GamePlay.player_two_image, GamePlay.itemTypeCount * 50 + Board.oppX * 50 - 2, Board.oppY * 50 - 2);
     },
     drawItems: function(ctx, state, history) {
+		var fruit = {}, counter = 0;
+
         for (var i=0; i<WIDTH; i++) {
             for (var j=0; j<HEIGHT; j++) {
                 if (state[i][j] !== 0) {
                     ctx.drawImage(GamePlay.itemImages[state[i][j] - 1], GamePlay.itemTypeCount * 50 + i * 50, j * 50);
+
+					counter += 1;
+					fruit = Object.create(Fruit);
+					fruit.id = counter;
+					fruit.loc = {x: i, y: j};
+					fruit.type = state[i][j];
+					ctx.fillText(fruit.getRating().toFixed(2), GamePlay.itemTypeCount * 50 + i * 50, j * 52);
+
                 } else if (GamePlay.show_breadcrumbs && history[i][j]==1) {
                     ctx.drawImage(GamePlay.visitedImg, GamePlay.itemTypeCount * 50 + i * 50, j * 50);
                 } else if (GamePlay.show_breadcrumbs && history[i][j]==2) {
