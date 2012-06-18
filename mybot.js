@@ -3,10 +3,12 @@ var Fruit = {
 	type: 0,
 	loc: {x: 0, y: 0},
 	rateType: function (rating) {
-		rating -= api.countType(this.type) * 1.45;
-		rating -= api.isGood(this.type) ? 0 : 200;
-		rating += api.isRare(this.type) ? 10 + get_number_of_item_types() : 0;
-		rating += api.isRarest(this.type) ? 20 + get_number_of_item_types() : 0;
+		if ( ! api.isGood(this.type)) {
+			return -100;
+		}
+
+		rating += api.isRare(this.type) ? 50 : 0;
+		rating += api.isRarest(this.type) ? 40 : 0;
 
 		return rating;
 	},
@@ -16,23 +18,28 @@ var Fruit = {
 
 		for (var i = 0, l = fruitMap.length; i < l; i++) {
 			distance = api.getDistance(fruitMap[i].loc, this.loc);
-			if (distance < 4 && this.id !== fruitMap[i].id) {
-				rating += 5 / distance;
-				rating += this.type === fruitMap[i].type ? 2 / distance : 0;
+			if (distance < 2 && this.id !== fruitMap[i].id) {
+				rating += this.type === fruitMap[i].type ? 5 : 0;
 			}
 		}
 
 		return rating;
 	},
+	rateDistance: function (rating) {
+		var fromMe = api.getDistance(api.me(), this.loc);
+		var fromThem = api.getDistance(api.them(), this.loc);
+
+		rating -= fromMe * 5;
+
+		return rating;
+	},
 	getRating: function () {
 		var rating = 100;
-		var distMe = api.getDistance(api.me(), this.loc);
-		var distThem = api.getDistance(api.them(), this.loc);
 
-		rating -= distMe * 5;
-		rating -= distThem < distMe ? 6 : 0;
 		rating = this.rateType(rating);
+		rating = this.rateDistance(rating);
 		rating = this.rateArea(rating);
+
 
 		return rating;
 	}
@@ -105,31 +112,32 @@ function new_game() {
 		};
 
 		var isRarest = function (type) {
-			var count, rarest, types = [];
+			var types = [], rarest = {}, thisType = {};
 
-			for (var i = 1; i < get_number_of_item_types(); i++) {
-				count = countType(i) - get_my_item_count(i) - get_opponent_item_count(i);
-				if (count > 0) {
-					types.push({type: i, left: count});
+			for (var i = 1, l = get_number_of_item_types(); i < l; ++i) {
+				if (countType(i) > 0) {
+					types.push({type: i, count: countType(i)});
 				}
 			}
 
 			rarest = types[0];
 
-			for (var i = 1; i < types.length; i++) {
-				rarest = rarest.left < types[i].left ? rarest : types[i];
+			for (var i = 1, l = types.length; i < l; ++i) {
+				rarest = rarest.count < types[i].count ? rarest : types[i];
 			}
 
-			if (rarest && rarest.type === type) {
+			if (rarest.type === type) {
 				return true;
 			}
-		};
 
-		var track = function (string) {
-			if (trace) {
-				trace(string);
-			}else {
-				console.log(string);
+			for (var i = 0, l = types.length; i < l; ++i) {
+				if (types[i].type === type) {
+					thisType = types[i];
+				}
+			}
+
+			if (thisType.count === rarest.count) {
+				return true;
 			}
 		};
 
@@ -142,8 +150,7 @@ function new_game() {
 			isRarest: isRarest,
 			getDistance: getDistance,
 			getMap: getMap,
-			isFruit: isFruit,
-			track: track
+			isFruit: isFruit
 		}
 	}());
 
@@ -184,13 +191,13 @@ function new_game() {
 			var waypoint = {x: api.me().x - target.loc.x, y: api.me().y - target.loc.y};
 
 			if ( ! waypoint) {
-				api.track('why is there no waypoint.');
+				trace('why is there no waypoint.');
 
 				return PASS;
 			}
 
 			if ( ! target) {
-				api.track('why is there no target.');
+				trace('why is there no target.');
 
 				return PASS;
 			}
@@ -199,12 +206,12 @@ function new_game() {
 				if (api.isFruit(target.loc)) {
 					return TAKE;
 				}else {
-					api.track('trying to take an empty cell?');
+					trace('trying to take an empty cell?');
 				}
 			}
 
 			if (waypoint.x === 0 && waypoint.y === 0) {
-				api.track('why no take?!?');
+				trace('why no take?!?');
 			}
 
 			if (checkX(waypoint.x)) {
@@ -215,7 +222,7 @@ function new_game() {
 				return checkY(waypoint.y);
 			}
 
-			api.track('why is there no moves.');
+			trace('why is there no moves.');
 
 			return PASS;
 		};

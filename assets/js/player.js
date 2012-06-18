@@ -160,7 +160,7 @@ var GamePlay = {
 					fruit.id = counter;
 					fruit.loc = {x: i, y: j};
 					fruit.type = state[i][j];
-					ctx.fillText(fruit.getRating().toFixed(2), GamePlay.itemTypeCount * 50 + i * 50, j * 52);
+					ctx.fillText(fruit.getRating().toFixed(2), GamePlay.itemTypeCount * 50 + i * 52, j * 52.3);
 
                 } else if (GamePlay.show_breadcrumbs && history[i][j]==1) {
                     ctx.drawImage(GamePlay.visitedImg, GamePlay.itemTypeCount * 50 + i * 50, j * 50);
